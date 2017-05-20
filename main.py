@@ -20,15 +20,15 @@ class JobSpider:
         self.baseUrl = 'http://www.51job.com/'
         self.driver.get(self.baseUrl)
         time.sleep(0.5)
-        self.driver.find_element_by_xpath("//input[@id='kwdselectid']").send_keys("软件测试工程师")
+
+
+    def search(self,keyword=u'软件测试工程师'):
+        self.driver.find_element_by_xpath("//input[@id='kwdselectid']").send_keys(keyword)
         self.driver.find_element_by_xpath("//*[@id='work_position_click']").click()
         self.driver.find_element_by_xpath('//*[@id="work_position_click_multiple_selected_each_010000"]').click()
         self.driver.find_element_by_xpath('//*[@id="work_position_click_center_right_list_category_000000_010000"]').click()
         self.driver.find_element_by_xpath('//*[@id="work_position_click_bottom_save"]').click()
         self.driver.find_element_by_xpath("//button[contains(.,'搜索')]").click()
-
-    def search(self,keyword=u'软件测试工程师'):
-        #打开首页，输入搜索内容，然后点击按钮
         time.sleep(5)
 
     def select_city(self,city='beijing'):
@@ -62,20 +62,43 @@ class JobSpider:
     def get_end_page(self):
         self.end_page = self.driver.find_element_by_xpath("//*[@id='resultList']/div[1]/div[4]").text
         self.end_page = self.end_page[-2:]
-        print self.end_page
+        print self.end_page + "页"
         return self.end_page
 
     def goto_netxt_page(self):
-        self.dr.find_element_by_xpath('.pager_next').click()
+        driver.find_element_by_xpath("//a[@id='rtNext']").click() #点击下一页
         time.sleep(5)
 
     def get_job_info_per_page(self):
-        jobs_of_current_page = self.dr.find_element_by_xpath('')
-        for job in jobs_of_current_page:
-            company_id = job.get_attribute('data-companyid')
-            position_name = job.get_attribute('')
-            position_id = job.get_attribute('')
-            salary = job.get_attribute('')
+        jobs_of_current_page = self.driver.find_elements_by_css_selector('div.el')
+        print len(jobs_of_current_page)
+        job_count = len(jobs_of_current_page) - 11
+        #//*[@id="resultList"]/div[3]
+        #//*[@id="resultList"]/div[3]/span[1]/a
+        #print dir(jobs_of_current_page)
+        #print len(jobs_of_current_page)
+        for x in xrange(1,job_count):
+            print x
+            xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/p/span/a"
+            print self.driver.find_element_by_xpath(xpath).text
+
+            xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/span[1]/a"
+            print self.driver.find_element_by_xpath(xpath).text
+
+            xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/span[2]"
+            print self.driver.find_element_by_xpath(xpath).text
+
+            xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/span[3]"
+            print self.driver.find_element_by_xpath(xpath).text
+            # company_name= job.get_attribute(job.title)
+            # print company_name
+            # position_name = job.get_attribute('')
+            # position_id = job.get_attribute('')
+            # salary = job.get_attribute('')
+
+            pass
+
+
 
         try:
             salary_min = int(salary[0].replace('k','').replace('K',''))
@@ -105,7 +128,7 @@ class JobSpider:
 
 
     def start(self):
-        self.search(u'测试')
+        self.search(u'软件测试工程师')
         # self.select_city(city_name)
         # print city_name
         end_page = self.get_end_page()
