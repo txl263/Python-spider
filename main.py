@@ -77,19 +77,40 @@ class JobSpider:
         #//*[@id="resultList"]/div[3]/span[1]/a
         #print dir(jobs_of_current_page)
         #print len(jobs_of_current_page)
+        currentWin = self.driver.current_window_handle
+        print currentWin
         for x in xrange(1,job_count):
             print x
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/p/span/a"
-            print self.driver.find_element_by_xpath(xpath).text
+            position_name = self.driver.find_element_by_xpath(xpath).text
+            print position_name
 
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/span[1]/a"
-            print self.driver.find_element_by_xpath(xpath).text
+            company_name = self.driver.find_element_by_xpath(xpath).text
+            print company_name
 
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/span[2]"
-            print self.driver.find_element_by_xpath(xpath).text
+            District = self.driver.find_element_by_xpath(xpath).text
+            print District
 
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/span[3]"
-            print self.driver.find_element_by_xpath(xpath).text
+            salary = self.driver.find_element_by_xpath(xpath).text
+            print salary
+
+            self.driver.find_element_by_xpath(xpath).click()
+            xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/p/span/a"
+            self.driver.find_element_by_xpath(xpath).click()
+            time.sleep(2)
+            all_handles = self.driver.window_handles
+            for handle in all_handles:
+                if handle != currentWin:
+                    print handle
+                    self.driver.switch_to_window(handle)
+                    self.driver.close()
+            self.driver.switch_to_window(currentWin)
+
+
+            
             # company_name= job.get_attribute(job.title)
             # print company_name
             # position_name = job.get_attribute('')
@@ -109,7 +130,6 @@ class JobSpider:
             salary_max = int(salary[-1].replace('k','').replace('K',''))
         except:
             salary_max = 0
-        company_name = job.get_attribute('')
         exp = job.find_element_by_xpath('')
         education = exp[-1]
         exp_text = exp[0]
