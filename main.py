@@ -72,7 +72,7 @@ class JobSpider:
     def get_job_info_per_page(self):
         jobs_of_current_page = self.driver.find_elements_by_css_selector('div.el')
         print len(jobs_of_current_page)
-        job_count = len(jobs_of_current_page) - 11
+        job_count = len(jobs_of_current_page) - 9
         #//*[@id="resultList"]/div[3]
         #//*[@id="resultList"]/div[3]/span[1]/a
         #print dir(jobs_of_current_page)
@@ -106,16 +106,13 @@ class JobSpider:
                 if handle != currentWin:
                     print handle
                     self.driver.switch_to_window(handle)
+                    try:
+                        location = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[5]/div/p').text
+                        print location
+                    except:
+                        location = ''    
                     self.driver.close()
             self.driver.switch_to_window(currentWin)
-
-
-            
-            # company_name= job.get_attribute(job.title)
-            # print company_name
-            # position_name = job.get_attribute('')
-            # position_id = job.get_attribute('')
-            # salary = job.get_attribute('')
 
             pass
 
