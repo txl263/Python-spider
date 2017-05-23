@@ -9,6 +9,9 @@ import sys
 op = Options()
 op.add_argument('user-data-dir=/Volumes/MAC_DATA_USB/Eric/Library/Application Support/Google/Chrome/Default')
 
+
+    
+
 class JobSpider:
     def __init__(self):
         
@@ -21,6 +24,17 @@ class JobSpider:
         self.driver.get(self.baseUrl)
         time.sleep(0.5)
 
+    def is_element_exist(self,css):
+        css_selector = css
+        s = self.driver.find_elements_by_css_selector(css_selector)
+        if len(s) == 0:
+            print "元素未找到:%s"%css_selector
+            return False
+        elif len(s) == 1:
+            return True
+        else:
+            print "找到%s个元素：%s"%(len(S),css_selector)
+            return False
 
     def search(self,keyword=u'软件测试工程师'):
         self.driver.find_element_by_xpath("//input[@id='kwdselectid']").send_keys(keyword)
@@ -78,7 +92,7 @@ class JobSpider:
         #print dir(jobs_of_current_page)
         #print len(jobs_of_current_page)
         currentWin = self.driver.current_window_handle
-        print currentWin
+        #print currentWin
         for x in xrange(1,job_count):
             print x
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/p/span/a"
@@ -104,14 +118,36 @@ class JobSpider:
             all_handles = self.driver.window_handles
             for handle in all_handles:
                 if handle != currentWin:
-                    print handle
+                    #print handle
                     self.driver.switch_to_window(handle)
                     try:
                         location = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[5]/div/p').text
                         print location
                     except:
-                        location = ''    
+                        location = ''
+                    #这部分晚上用for循环重写
+                    # if self.is_element_exist(".tBorderTop_box>.jtag.inbox>.t1>.sp4>.i1"):
+                    #     exp = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[1]').text
+                    #     print exp
+                    #     if self.is_element_exist('.tBorderTop_box>.jtag.inbox>.t1>.sp4>.i2'):
+                    #         education = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[2]').text
+                    #         print education
+                    #         if self.is_element_exist('.tBorderTop_box>.jtag.inbox>.t1>.sp4>.i3'):
+                    #             recruitment = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[3]').text
+                    #             print recruitment
+                    #             if self.is_element_exist('.tBorderTop_box>.jtag.inbox>.t1>.sp4>.i4'):
+                    #                 issue_time = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[4]').text
+                    #                 print issue_time
+                    #                 if self.is_element_exist('.tBorderTop_box>.jtag.inbox>.t1>.sp4>.i5'):
+                    #                     english_require = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[5]').text
+                    #                     print english_require
+
+
+                        
+
+
                     self.driver.close()
+
             self.driver.switch_to_window(currentWin)
 
             pass
@@ -136,7 +172,7 @@ class JobSpider:
         location = job.find_element_by_xpath('')
 
         try:
-            Job.create(company_id=company_id,position_id=position_id,position_name=position_name,
+            Job.create(company_id=company_id,District=District,position_name=position_name,
                 salary_min=salary_min,salary_max=salary_max,company_name=company_name,
                 exp=exp_text,education=education,tags=tags,industry=industry,summary=summary,
                 city=self.city_name,location=location)
