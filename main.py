@@ -85,16 +85,16 @@ class JobSpider:
 
     def get_job_info_per_page(self):
         jobs_of_current_page = self.driver.find_elements_by_css_selector('div.el')
-        print len(jobs_of_current_page)
-        job_count = len(jobs_of_current_page) - 9
+        print '每页' + str(len(jobs_of_current_page) - 10) + '个'
+        job_count = len(jobs_of_current_page) - 10
         #//*[@id="resultList"]/div[3]
         #//*[@id="resultList"]/div[3]/span[1]/a
         #print dir(jobs_of_current_page)
         #print len(jobs_of_current_page)
         currentWin = self.driver.current_window_handle
         #print currentWin
-        for x in xrange(1,job_count):
-            print x
+        for x in xrange(1,job_count+1):
+            print '第' + str(x) + '个职位'
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/p/span/a"
             position_name = self.driver.find_element_by_xpath(xpath).text
             print position_name
@@ -104,16 +104,39 @@ class JobSpider:
             print company_name
 
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/span[2]"
-            District = self.driver.find_element_by_xpath(xpath).text
+            District = self.driver.find_element_by_xpath(xpath).text         #区县
             print District
 
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/span[3]"
-            salary = self.driver.find_element_by_xpath(xpath).text
+            salary = self.driver.find_element_by_xpath(xpath).text  
             print salary
-
+            if salary.find('/') != -1 :
+                #print '/的位置在' + str(salary.find('/'))
+                if salary[salary.find('/')-1] == '千' :
+                    #print '-的位置在' + str(salary.find('-'))
+                    if salary[0:salary.find('-')-1] :
+                        salary_min = salary[0:salary.find('-')] + 'K'
+                        salary_max = salary[salary.find('-')+1:salary.find('千')] + 'K'
+                    else:
+                        salary_min = salary[0] + 'K'
+                        salary_max = salary[salary.find('-')+1:salary.find('千')] + 'K'
+                    print salary_min
+                    print salary_max
+                else: #如果薪水单位是万
+                    #print '-的位置在' + str(salary.find('-'))
+                    if salary[0:salary.find('-')-1] :
+                        salary_min = str(float(salary[0:salary.find('-')])*10) + 'K'
+                        salary_max = str(float(salary[salary.find('-')+1:salary.find('万')])*10) + 'K'
+                    else:
+                        salary_min = str(float(salary[0])*10) + 'K'
+                        salary_max = str(float(salary[salary.find('-')+1:salary.find('万')])*10) + 'K'
+                    print salary_min
+                    print salary_max                    
+            else:
+                print ''
             self.driver.find_element_by_xpath(xpath).click()
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/p/span/a"
-            self.driver.find_element_by_xpath(xpath).click()
+            self.driver.find_element_by_xpath(xpath).click()   #点击职位名称，打开新窗口显示职位详情
             time.sleep(2)
             all_handles = self.driver.window_handles
             for handle in all_handles:
@@ -125,51 +148,35 @@ class JobSpider:
                         print location
                     except:
                         location = ''
-                    #这部分晚上用for循环重写
-                    # if self.is_element_exist(".tBorderTop_box>.jtag.inbox>.t1>.sp4>.i1"):
-                    #     exp = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[1]').text
-                    #     print exp
-                    #     if self.is_element_exist('.tBorderTop_box>.jtag.inbox>.t1>.sp4>.i2'):
-                    #         education = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[2]').text
-                    #         print education
-                    #         if self.is_element_exist('.tBorderTop_box>.jtag.inbox>.t1>.sp4>.i3'):
-                    #             recruitment = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[3]').text
-                    #             print recruitment
-                    #             if self.is_element_exist('.tBorderTop_box>.jtag.inbox>.t1>.sp4>.i4'):
-                    #                 issue_time = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[4]').text
-                    #                 print issue_time
-                    #                 if self.is_element_exist('.tBorderTop_box>.jtag.inbox>.t1>.sp4>.i5'):
-                    #                     english_require = self.driver.find_element_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[5]').text
-                    #                     print english_require
 
-
-                        
-
-
+                    count = len(self.driver.find_elements_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span'))
+                    print '一共' + str(count) + '个标签'
+                    for x in xrange(1,count+1):
+                        #print x
+                        em_xpath = '/html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[' + str(x) + ']/em'
+                        lable_xpath = 'html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[' + str(x) + ']'
+                        if self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i1':
+                            exp_text = self.driver.find_element_by_xpath(lable_xpath).text
+                            print exp_text
+                        elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i2':
+                            education = self.driver.find_element_by_xpath(lable_xpath).text
+                            print education
+                        elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i3':
+                             Number_of_Recruitment = self.driver.find_element_by_xpath(lable_xpath).text
+                             print Number_of_Recruitment
+                        elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i4':
+                            pubdate = self.driver.find_element_by_xpath(lable_xpath).text
+                            print pubdate
+                        elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i5':
+                            language = self.driver.find_element_by_xpath(lable_xpath).text
+                            print language
+                        elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i6':
+                            speciality = self.driver.find_element_by_xpath(lable_xpath).text
+                            print speciality
+                    #获取福利    
                     self.driver.close()
 
             self.driver.switch_to_window(currentWin)
-
-            pass
-
-
-
-        try:
-            salary_min = int(salary[0].replace('k','').replace('K',''))
-        except:
-            salary_min = 0
-
-        try:
-            salary_max = int(salary[-1].replace('k','').replace('K',''))
-        except:
-            salary_max = 0
-        exp = job.find_element_by_xpath('')
-        education = exp[-1]
-        exp_text = exp[0]
-        tags = job.find_element_by_xpath('')
-        industry = job.find_element_by_xpath('')
-        summary = job.find_element_by_xpath('')
-        location = job.find_element_by_xpath('')
 
         try:
             Job.create(company_id=company_id,District=District,position_name=position_name,
