@@ -156,22 +156,22 @@ class JobSpider:
                         em_xpath = '/html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[' + str(x) + ']/em'
                         lable_xpath = 'html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[' + str(x) + ']'
                         if self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i1':
-                            exp_text = self.driver.find_element_by_xpath(lable_xpath).text
+                            exp_text = self.driver.find_element_by_xpath(lable_xpath).text                    #经验
                             print exp_text
                         elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i2':
-                            education = self.driver.find_element_by_xpath(lable_xpath).text
+                            education = self.driver.find_element_by_xpath(lable_xpath).text                   #学历
                             print education
                         elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i3':
-                             Number_of_Recruitment = self.driver.find_element_by_xpath(lable_xpath).text
+                             Number_of_Recruitment = self.driver.find_element_by_xpath(lable_xpath).text      #招聘人数
                              print Number_of_Recruitment
                         elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i4':
-                            pubdate = self.driver.find_element_by_xpath(lable_xpath).text
+                            pubdate = self.driver.find_element_by_xpath(lable_xpath).text                      #发布日期
                             print pubdate
                         elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i5':
-                            language = self.driver.find_element_by_xpath(lable_xpath).text
+                            language = self.driver.find_element_by_xpath(lable_xpath).text                     #外语要求
                             print language
                         elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i6':
-                            speciality = self.driver.find_element_by_xpath(lable_xpath).text
+                            speciality = self.driver.find_element_by_xpath(lable_xpath).text                   #学科要求
                             print speciality
                     #获取福利    
                     self.driver.close()
