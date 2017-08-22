@@ -1,3 +1,4 @@
 preset.py
 *.pyc
 password.py
+chromedriver.exe

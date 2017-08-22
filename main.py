@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 import time
 from job_model import Job
 import peewee
@@ -10,8 +12,8 @@ import sys
 #sys.setdefaultencoding('utf8')
 
 op = Options()
-#op.add_argument('user-data-dir=/Volumes/MAC_DATA_USB/Eric/Library/Application Support/Google/Chrome/Default')
-op.add_argument('user-data-dir=C:\\Users\\erict\\AppData\\Local\\Google\\Chrome\\User Data\\Default')
+op.add_argument('user-data-dir=/Volumes/MAC_DATA_USB/Eric/Library/Application Support/Google/Chrome/Default')
+#op.add_argument('user-data-dir=C:\\Users\\erict\\AppData\\Local\\Google\\Chrome\\User Data\\Default')
 
     
 
@@ -141,9 +143,14 @@ class JobSpider:
                     print salary_min
                     print salary_max                    
             else:
-                print ''
-            self.driver.find_element_by_xpath(xpath).click()
+                print 'eixt'
+            #self.driver.find_element_by_xpath(xpath).click()
             xpath = ".//*[@id='resultList']/div[" + str(x+2) + "]/p/span/a"
+            #ac = self.driver.find_element_by_xpath(xpath)
+            #ActionChains(self.driver).move_to_element(ac).perform()
+            target = self.driver.find_element_by_xpath(xpath)
+            self.driver.execute_script("arguments[0].scrollIntoView();", target)
+            #time.sleep(0.5)
             self.driver.find_element_by_xpath(xpath).click()   #点击职位名称，打开新窗口显示职位详情
             time.sleep(2)
             all_handles = self.driver.window_handles
@@ -159,11 +166,13 @@ class JobSpider:
 
                     count = len(self.driver.find_elements_by_xpath('html/body/div[2]/div[2]/div[3]/div[1]/div/div/span'))
                     print '一共' + str(count) + '个标签'
+                    exp_text,education,Number_of_Recruitment,pubdate,language,speciality = '','','','','',''
                     for x in xrange(1,count+1):
                         #print x
                         em_xpath = '/html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[' + str(x) + ']/em'
                         lable_xpath = 'html/body/div[2]/div[2]/div[3]/div[1]/div/div/span[' + str(x) + ']'
                         if self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i1':
+                            global exp_text
                             exp_text = self.driver.find_element_by_xpath(lable_xpath).text                    #经验
                             print exp_text
                         elif self.driver.find_element_by_xpath(em_xpath).get_attribute('class') == 'i2':
@@ -185,14 +194,13 @@ class JobSpider:
                     self.driver.close()
 
             self.driver.switch_to_window(currentWin)
-
-        try:
-            Job.create(company_id=company_id,District=District,position_name=position_name,
-                salary_min=salary_min,salary_max=salary_max,company_name=company_name,
-                exp=exp_text,education=education,tags=tags,industry=industry,summary=summary,
-                city=self.city_name,location=location)
-        except peewee.IntegrityError:
-            print 'position %s, id = %s, already exists' %(position_name,position_id)
+            print str(x*20)
+            #js = "window.scrollTo(0, document.body.scrollTop=" + str(x*20) + ");"
+            #self.driver.execute_script(js) 
+            #try:
+            Job.create(position_name=position_name,District=District,salary_min=salary_min,salary_max=salary_max,company_name=company_name,exp=exp_text,education=education,Number_of_Recruitment=Number_of_Recruitment,location=location,pubdate=pubdate,speciality=speciality)
+            #except peewee.IntegrityError:
+            #    print 'error'
 
 
     def start(self):
