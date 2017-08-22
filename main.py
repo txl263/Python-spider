@@ -6,9 +6,12 @@ import time
 from job_model import Job
 import peewee
 import sys
-op = Options()
-op.add_argument('user-data-dir=/Volumes/MAC_DATA_USB/Eric/Library/Application Support/Google/Chrome/Default')
+#reload(sys)
+#sys.setdefaultencoding('utf8')
 
+op = Options()
+#op.add_argument('user-data-dir=/Volumes/MAC_DATA_USB/Eric/Library/Application Support/Google/Chrome/Default')
+op.add_argument('user-data-dir=C:\\Users\\erict\\AppData\\Local\\Google\\Chrome\\User Data\\Default')
 
     
 
@@ -16,7 +19,9 @@ class JobSpider:
     def __init__(self):
         
         #driver = self.driver
+        #self.driver = webdriver.Chrome("C:/Users/erict/AppData/Local/Google/Chrome/Application/chromedriver.exe",chrome_options=op)
         self.driver = webdriver.Chrome(chrome_options=op)
+
         #self.city_map = {}
         #self.driver = webdriver.chrome()
         #self.driver.implicitly_wait(30)
@@ -74,7 +79,10 @@ class JobSpider:
         return not disabled
 
     def get_end_page(self):
-        self.end_page = self.driver.find_element_by_xpath("//*[@id='resultList']/div[1]/div[4]").text
+        print 'ye'
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")      #滚动到底部
+        self.end_page = self.driver.find_element_by_xpath("/html/body/div[2]/div[6]/div/div/div/span[1]").text
+        print self.end_page + 'ye'
         self.end_page = self.end_page[-2:]
         print self.end_page + "页"
         return self.end_page
@@ -191,7 +199,7 @@ class JobSpider:
         self.search(u'软件测试工程师')
         # self.select_city(city_name)
         # print city_name
-        end_page = self.get_end_page()
+        #end_page = self.get_end_page()
         self.get_job_info_per_page()
         while sef.has_next_page:
             self.goto_netxt_page()
